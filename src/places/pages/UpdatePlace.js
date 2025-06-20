@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React, { useEffect, useState } from 'react'; // ✅ fixed: removed `use`, added `useState`
 import { useParams } from 'react-router-dom';
 
 import Input from '../../shared/components/FormElements/Input';
@@ -40,33 +40,60 @@ const DUMMY_PLACES = [
 const UpdatePlace = () => {
   const placeId = useParams().placeId;
 
-  const identifiedPlace = DUMMY_PLACES.find(p => p.id === placeId);
+  const [isLoading, setIsLoading] = useState(true); 
 
-  const [formState, inputHandler] = useForm(
+  const [formState, inputHandler, setFormData] = useForm(
     {
       title: {
-        value: identifiedPlace ? identifiedPlace.title : '',
-        isValid: true
+        value: '',
+        isValid: false
       },
       description: {
-        value: identifiedPlace ? identifiedPlace.description : '',
-        isValid: true
+        value: '',
+        isValid: false
       }
     },
-    true
+    false
   );
+
+  const identifiedPlace = DUMMY_PLACES.find(p => p.id === placeId);
+
+  useEffect(() => {
+    if (identifiedPlace) {
+      setFormData(
+        {
+          title: {
+            value: identifiedPlace.title,
+            isValid: true
+          },
+          description: {
+            value: identifiedPlace.description,
+            isValid: true
+          }
+        },
+        true
+      );
+    }
+    setIsLoading(false); 
+  }, [setFormData, identifiedPlace]);
 
   const placeUpdateSubmitHandler = event => {
     event.preventDefault();
-    console.log(formState.inputs); // Send to backend
-    // Here you would typically send the updated place data to your backend
-    // For example, using fetch or axios to make a PUT request
+    console.log(formState.inputs);
   };
 
   if (!identifiedPlace) {
     return (
       <div className="center">
         <h2>Could not find place!</h2>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="center">
+        <h2>Loading...</h2>
       </div>
     );
   }
@@ -80,7 +107,7 @@ const UpdatePlace = () => {
         label="Title"
         validators={[VALIDATOR_REQUIRE()]}
         errorText="Please enter a valid title."
-        onInput={inputHandler} 
+        onInput={inputHandler}
         initialValue={formState.inputs.title.value}
         initialValid={formState.inputs.title.isValid}
       />
@@ -90,9 +117,9 @@ const UpdatePlace = () => {
         label="Description"
         validators={[VALIDATOR_MINLENGTH(5)]}
         errorText="Please enter a valid description (minimum 5 characters)."
-        onInput={inputHandler} 
-        initialValue={formState.inputs.description.value} 
-        initialValid={formState.inputs.description.isValid} 
+        onInput={inputHandler}
+        initialValue={formState.inputs.description.value}
+        initialValid={formState.inputs.description.isValid}
       />
       <Button type="submit" disabled={!formState.isValid}>
         UPDATE PLACE
