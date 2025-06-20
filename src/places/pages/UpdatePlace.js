@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
+import Card from '../../shared/components/UIElements/Card';
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../shared/Util/validators';
 import { useForm } from '../../shared/hooks/form-hook';
 
@@ -11,7 +12,7 @@ import './PlaceForm.css';
 const DUMMY_PLACES = [
   {
     id: 'p1',
-    title: 'Empire State Building',
+    title: 'Emp.  State Building',
     description: 'One of the most famous skyscrapers in the world.',
     imageUrl:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Empire_State_Building_%28cropped%29.jpg/800px-Empire_State_Building_%28cropped%29.jpg',
@@ -85,10 +86,13 @@ const UpdatePlace = () => {
   if (!identifiedPlace) {
     return (
       <div className="center">
-        <h2>Could not find place!</h2>
+        <Card>
+            <h2>Could not find place!</h2>
+        </Card>
+        
       </div>
-    );
-  }
+    )
+  };
 
   if (isLoading) {
     return (
