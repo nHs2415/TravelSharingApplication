@@ -34,14 +34,14 @@ const getPlaceById = (req, res, next) => {
 const GetPlaceByUserId = (req, res, next) => {
     const userId = req.params.uid;
 
-    const place = DUMMY_PLACES.find(p => {
+    const place = DUMMY_PLACES.filter(p => {
         return p.creator === userId;
     });
 
     
-    if (!place) {
+    if (!place || place.length === 0) {
         return next(
-            new HttpError('Could not find a place for the provided user id.', 404)
+            new HttpError('Could not find a places for the provided user id.', 404)
         );
     } 
     res.json({ place });
